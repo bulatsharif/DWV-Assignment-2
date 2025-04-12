@@ -4,21 +4,77 @@
     <meta charset="UTF-8" />
     <title>Traffic Visualizer</title>
     <style>
-        body { margin: 0; overflow: hidden; }
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    
         #tooltip {
             position: absolute;
             padding: 8px;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0, 0, 0, 0.75);
             color: white;
             border-radius: 4px;
             font-size: 12px;
             display: none;
             pointer-events: none;
         }
+    
+        /* Style for the country table */
+        #countryTable {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6); /* Dark transparent background */
+            padding: 16px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            max-width: 300px;
+            color: white;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    
+        #countryTable table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+    
+        #countryTable td {
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+    
+        #countryTable tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    
+        #countryTable tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        #requestChart {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 400px;
+            height: 200px;
+            background-color: transparent;
+            z-index: 100;
+        }
+        
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
+    <!-- Tooltip for dot hover -->
     <div id="tooltip"></div>
+    <!-- Country ranking table -->
+    <div id="countryTable"></div>
     <script type="module" src="index.js"></script>
+    <canvas id="requestChart"></canvas>
+
 </body>
 </html>
