@@ -1,11 +1,73 @@
-// ==============================
-// IMPORTS AND CONFIGURATION
-// ==============================
-
-// Importing the Three.js library and required modules
+// importing needed packages
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js";
 import { OrbitControls } from './lib/OrbitControls.js';
 
+// this function is used for creating charts for the three countries
+function createChart(ctxId, label) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: label,
+                data: [],
+                borderColor: 'yellow',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2
+            }]
+        },
+        options: {
+            responsive: false,
+            animation: false,
+            plugins: {
+                legend: { labels: { color: 'white' } }
+            },
+            scales: {
+                x: { ticks: { color: 'white' } },
+                y: { ticks: { color: 'white' } }
+            }
+        }
+    });
+}
+
+// Initialize charts for 3 countries
+const charts = {
+    US: createChart("chartUS", "USA Requests"),
+    RU: createChart("chartRU", "Russia Requests"),
+    CN: createChart("chartCN", "China Requests")
+};
+setInterval(updateCountryCharts, 1000);
+
+
+// function to update the country charts
+function updateCountryCharts() {
+    const now = new Date();
+    const label = now.toLocaleTimeString();
+
+    const counts = { US: 0, RU: 0, CN: 0 };
+
+    activeDots.forEach(dot => {
+        const code = dot.userData.country_code;
+        if (counts[code] !== undefined) {
+            counts[code]++;
+        }
+    });
+
+    for (const code of ["US", "RU", "CN"]) {
+        const chart = charts[code];
+        chart.data.labels.push(label);
+        chart.data.datasets[0].data.push(counts[code]);
+
+        if (chart.data.labels.length > 60) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+        }
+
+        chart.update();
+    }
+}
 
 let scene, camera, renderer, earth, controls;
 let activeDots = [];  // Array to store currently visible dots
@@ -19,11 +81,11 @@ let nextIndex = 0;
 init();
 animate();
 
-// Fetch a new packet every 100ms (adjust as needed)
+// Fetch a new packet every 100ms 
 setInterval(fetchAndPlot, 100); 
 
 // Update the country table every second
-setInterval(updateCountryTable, 1000);
+setInterval(updateCountryTable, 100);
 
 
 
@@ -31,7 +93,7 @@ setInterval(updateCountryTable, 1000);
 function init() {
     scene = new THREE.Scene();
 
-    // Camera setup: a perspective view
+    // Camera setup
     camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 3);
 
@@ -40,7 +102,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Create the Earth (globe) using a texture map
+    // Create the Earth using a texture map
     const textureLoader = new THREE.TextureLoader();
     const earthMaterial = new THREE.MeshPhongMaterial({
         map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
@@ -54,7 +116,7 @@ function init() {
     scene.add(light);
     scene.add(new THREE.AmbientLight(0x222222));
 
-    // Orbit Controls for interaction (limits zoom range)
+    // Orbit Controls for interaction 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -83,8 +145,9 @@ function latLonToVector3(lat, lon, radius = 1.01) {
         radius * Math.sin(phi) * Math.sin(theta)
     );
 }
-// Converts a two-letter country code to an emoji flag.
-// If the input is not exactly 2 letters, returns an empty string.
+
+
+// Converts a two-letter country code to an emoji flag (used for country table).
 function isoToFlagEmoji(isoCode) {
     if (!isoCode || isoCode.length !== 2) return "";
     return String.fromCodePoint(
@@ -93,7 +156,7 @@ function isoToFlagEmoji(isoCode) {
 }
 
 
-
+// gets name and code from ip using specific api
 async function getCountryFromIP(ip) {
     try {
         const res = await fetch(`https://api.ipinfo.io/lite/${ip}?token=75b9299eb7bc80`);
@@ -146,11 +209,9 @@ async function fetchAndPlot() {
         const res = await fetch(`http://localhost:5001/get_data/${nextIndex}`);
         if (res.status === 200) {
             const packet = await res.json();
-            // Assumes packet contains 'Latitude', 'Longitude', 'ip', and 'suspicious'
             plotDot(packet.Latitude, packet.Longitude, packet.ip, packet.suspicious);
             nextIndex++;  // Increment counter for the next request
         } else {
-            // Log if no new packet is available yet
             console.log("No new packet available:", await res.json());
         }
     } catch (err) {
@@ -195,7 +256,7 @@ function onMouseMove(event) {
 // Updates the left-side table to list the top countries by count of visible dots.
 // This function recalculates the counts from the currently active dots.
 function updateCountryTable() {
-    const counts = {};  // Map: full name → { code: 'US', count: 3 }
+    const counts = {}; 
 
     activeDots.forEach(dot => {
         const name = dot.userData.country;
@@ -229,56 +290,6 @@ function updateCountryTable() {
     html += "</table>";
     countryTable.innerHTML = html;
 }
-
-const ctx = document.getElementById('requestChart').getContext('2d');
-const chartData = {
-    labels: [],
-    datasets: [{
-        label: 'Requests per Second',
-        data: [],
-        borderColor: 'yellow',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.2
-    }]
-};
-
-const requestChart = new Chart(ctx, {
-    type: 'line',
-    data: chartData,
-    options: {
-        responsive: false,
-        animation: false,
-        plugins: {
-            legend: { labels: { color: 'white' } }
-        },
-        scales: {
-            x: { ticks: { color: 'white' } },
-            y: { ticks: { color: 'white' } }
-        }
-    }
-});
-
-
-function updateRequestChart() {
-    const now = new Date();
-    const timeLabel = now.toLocaleTimeString();  // "HH:MM:SS"
-
-    const count = activeDots.length;  // current visible requests
-
-    chartData.labels.push(timeLabel);
-    chartData.datasets[0].data.push(count);
-
-    // Keep only the last 60 seconds
-    if (chartData.labels.length > 60) {
-        chartData.labels.shift();
-        chartData.datasets[0].data.shift();
-    }
-
-    requestChart.update();
-}
-
-setInterval(updateRequestChart, 1000);  // every second
 
 
 
