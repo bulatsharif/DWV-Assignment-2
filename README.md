@@ -36,7 +36,7 @@ All components are fully containerized and orchestrated using Docker Compose, ma
 
 ---
 
-### 3. **Visualization (Frontend with Three.js)** [50 points]
+### 3. **Visualization (Frontend with Three.js)**
 
 #### Location on World Map (Globe)
 - A 3D globe is created using **Three.js** and rendered via WebGL.
@@ -59,7 +59,7 @@ All components are fully containerized and orchestrated using Docker Compose, ma
 
 ---
 
-### 4. **Deployment with Docker Compose** [15 points]
+### 4. **Deployment with Docker Compose** 
 
 - Each component is placed in its own Docker container:
   - **Sender** (Python script)
