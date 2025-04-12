@@ -108,7 +108,7 @@ docker-compose up --build
 1. **Ensure Docker and Docker Compose are installed.**
 2. Clone the repository and navigate into it:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/bulatsharif/DWV-Assignment-2.git
    cd traffic-visualizer
    ```
 3. Start the entire project:
