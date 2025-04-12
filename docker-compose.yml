@@ -1,0 +1,38 @@
+services:
+  receiver:
+    build:
+      context: ./receiver_src
+    ports:
+      - "5001:5001"
+    container_name: receiver
+    networks:
+      - backend
+
+  sender:
+    build:
+      context: .
+      dockerfile: sender_src/Dockerfile
+    depends_on:
+      - receiver
+    volumes:
+      - ./data:/data
+    container_name: sender
+    networks:
+      - backend
+
+  visualization:
+    build:
+      context: ./visualization
+    ports:
+      - "8080:80"
+    container_name: visualization
+    networks:
+      - backend
+
+
+networks:
+  backend:
+    driver: bridge
+
+
+    
