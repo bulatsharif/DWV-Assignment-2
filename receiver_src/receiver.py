@@ -10,7 +10,6 @@ data = []
 def receive_point():
     data_rcvd = request.get_json()
     data.append(data_rcvd)
-    print(f"Data received: {data_rcvd}")
     return jsonify({"status": "success"}), 200
 
 
@@ -27,5 +26,11 @@ def get_data(index: int):
 
 
 if __name__ == "__main__":
-    app.run(debug = True, port=5001, host="0.0.0.0")
+    import logging
+    # Disable the built-in werkzeug logger
+    log = logging.getLogger('werkzeug')
+    log.disabled = True
+    app.logger.disabled = True
+
+    app.run(port=5001, host="0.0.0.0", debug=False)
     

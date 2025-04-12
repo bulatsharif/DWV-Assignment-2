@@ -1,72 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>2D Map Visualization with Three.js</title>
-  <style>body { margin: 0; }</style>
+    <meta charset="UTF-8" />
+    <title>Traffic Visualizer</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-  <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(
-      -1500, 1500, 729, -729, 0.1, 1000
-    );
-    camera.position.z = 10;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const loader = new THREE.TextureLoader();
-    loader.load('map.png', function(texture) {
-      const geometry = new THREE.PlaneGeometry(3000, 1458);
-      const material = new THREE.MeshBasicMaterial({ map: texture });
-      const plane = new THREE.Mesh(geometry, material);
-      scene.add(plane);
-
-      // Plot point after map is loaded
-      plotPoint(2.3522, 48.8566); // Paris
-      const { x, y } = lonLatToXY(2.3522, 48.8566);
-      const label = makeTextSprite("Paris");
-      label.position.set(x, y + 60, 0.1);
-      scene.add(label);
-    });
-
-    function lonLatToXY(lon, lat) {
-      const x = (lon / 180) * (3000 / 2); // from -1500 to 1500
-      const y = (lat / 90) * (1458 / 2);  // from -729 to 729
-      return { x, y };
-    }
-
-    function plotPoint(lon, lat, color = 0xff0000) {
-      const { x, y } = lonLatToXY(lon, lat);
-      const pointGeometry = new THREE.CircleGeometry(10, 32);
-      const pointMaterial = new THREE.MeshBasicMaterial({ color });
-      const point = new THREE.Mesh(pointGeometry, pointMaterial);
-      point.position.set(x, y, 0.1); // slight z offset
-      scene.add(point);
-    }
-
-    function makeTextSprite(message, parameters = {}) {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      context.font = 'Bold 30px Arial';
-      context.fillStyle = parameters.color || 'white';
-      context.fillText(message, 0, 30);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-      const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(200, 100, 1);
-      return sprite;
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    }
-    animate();
-  </script>
+    <div id="tooltip"></div>
+    <script type="module" src="index.js"></script>
 </body>
 </html>
