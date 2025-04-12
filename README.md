@@ -1,4 +1,4 @@
-# Traffic Visualizer
+# Data Wrangling and Visualization | Assignment №2 | Traffic Visualizer
 
 This repository contains interactive web-based visualization tool that simulates and displays web traffic originating from various global locations in real time. This repository was done as the solution for the Assignment II of Data Wrangling and Visualization course.
 It consists of three major components:
@@ -109,7 +109,7 @@ docker-compose up --build
 2. Clone the repository and navigate into it:
    ```bash
    git clone https://github.com/bulatsharif/DWV-Assignment-2.git
-   cd traffic-visualizer
+   cd DWV-Assignment-2
    ```
 3. Start the entire project:
    ```bash
